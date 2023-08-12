@@ -1,0 +1,75 @@
+cargo-features = ["profile-rustflags"]
+
+[package]
+name = "balloon-samd21"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+xiao_m0 = { git = "https://github.com/atsamd-rs/atsamd", features = ["rt", "unproven"] }
+panic-halt = "0.2.0"
+libm = "0.2.7"
+apollo = {path = "../apollo"}
+rand = { version = "0.8.5", features = ["small_rng"], default-features = false }
+ufmt = "0.2.0"
+
+[profile.dev]
+opt-level = 1
+debug = true
+debug-assertions = false
+overflow-checks = false
+lto = false
+panic = "abort"
+incremental = true
+codegen-units = 16
+
+
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+debug = false
+strip = true
+lto = true
+opt-level = 2
+rustflags = [
+    "-C", "inline-threshold=25"
+]
+
+[profile.dev.package."*"] # +
+debug = true
+strip = false
+codegen-units = 1
+opt-level = 2
+rustflags = [
+    "-C", "inline-threshold=25"
+]
+
+[profile.release.package."*"] # +
+codegen-units = 1
+debug = false
+strip = true
+opt-level = 2
+rustflags = [
+    "-C", "inline-threshold=25"
+]
+
+[profile.dev.build-override]
+codegen-units = 1
+debug = false
+strip = true
+opt-level = 2
+rustflags = [
+    "-C", "inline-threshold=25"
+]
+
+[profile.release.build-override]
+codegen-units = 1
+debug = false
+strip = true
+opt-level = 3
+rustflags = [
+    "-C", "inline-threshold=25"
+]
